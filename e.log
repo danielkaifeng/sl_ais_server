@@ -1,0 +1,6 @@
+/usr/lib64/python2.7/site-packages/h5py/__init__.py:34: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+ * Running on http://0.0.0.0:6500/ (Press CTRL+C to quit)
+192.168.9.60 - - [23/Oct/2018 10:11:44] "[37mPOST /get_ecg_disease_classification HTTP/1.1[0m" 200 -
+192.168.9.90 - - [23/Oct/2018 10:12:34] "[37mPOST /get_ecg_disease_classification HTTP/1.1[0m" 200 -
+192.168.9.20 - - [23/Oct/2018 10:56:37] "[37mPOST /get_ecg_disease_classification HTTP/1.1[0m" 200 -

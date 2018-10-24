@@ -5,7 +5,6 @@ import numpy as np
 import os
 from sys import argv
 #from convert_to_tfrecord import read_and_decode
-from xml_parse import parse_ecg_from_xml
 
 
 

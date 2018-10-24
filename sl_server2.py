@@ -18,7 +18,7 @@ from flask import make_response
 from flask_cors import CORS
 import datetime
 
-from update_mongoDB import update_record
+#from update_mongoDB import update_record
 from predict import *
 from predict_mul_disease import *
 
@@ -115,27 +115,20 @@ def process_data(req_dict):
 
 		return idx, ssid, bad_quality_flag
 
-def empty_response(app_key, ssid):
-		symp_data = {}
-
-		#除正常'0'外，全部病症编码为0
-		for k in app_key:
-			if k == '0':
-					continue
-			else:
-					symp_data[k] = 0
-	
+def empty_response():
 		symp = ["标签外分类"]
 		resp_dict = {"resultcode": 200, "resultmsg": "sucess",
 							"idx_code": [],
-							"ssid": ssid,
 							"symp_cn": symp,
 							"symp_code": [],
 							"bad_quality": False,
-							"suspected_flag": False,
-							"data": symp_data
+							"suspected_flag": "",
+							"data":{}
 							}
-		return resp_dict
+		response = json.dumps(resp_dict,
+							ensure_ascii=False
+					)
+		return response
 
 def bad_quality_response():
 		symp = ["数据质量差，无法分析"]
@@ -147,7 +140,10 @@ def bad_quality_response():
 							"suspected_flag": "",
 							"data":{}
 							}
-		return resp_dict
+		response = json.dumps(resp_dict,
+							ensure_ascii=False
+					)
+		return response
 
 def short_response():
 		# 判断心电数据是否至少有10秒，否则模型不能识别
@@ -176,7 +172,10 @@ def normal_response(idx, symp_idx_dict, app_key, ssid):
 						"data": symp_data,
 						"suspected_flag": status_flag
 					}
-		return resp_dict
+		response = json.dumps(resp_dict,
+							ensure_ascii=False
+					)
+		return response
 
 
 
@@ -185,10 +184,7 @@ def get_prediction():
 	buf = request.data
 
 	req_time = datetime.datetime.now()
-	print '\n\n'
 	print str(req_time)
-	print '\n\n'
-
 	buf = buf.replace("null", "''")
 	req_dict = eval(buf)
 
@@ -203,30 +199,20 @@ def get_prediction():
 			idx, ssid, bad_quality_flag = process_data(req_dict)
 			if len(idx) == 0:
 				if bad_quality_flag:
-					resp_dict = bad_quality_response()
+					response = bad_quality_response()
 				else:
-					resp_dict = empty_response(app_key, ssid)
+					response = empty_response()
 			else:
-				resp_dict = normal_response(idx, symp_idx_dict, app_key, ssid)
-
-			response = json.dumps(resp_dict, ensure_ascii=False)
-
-			resp_dict = eval(str(resp_dict).replace('.','_'))
-			#update_record(ssid, req_time, request.headers, resp_dict)
+				response = normal_response(idx, symp_idx_dict, app_key, ssid)
+			#update_record(ssid, req_time, request.headers, resp_dict, detect_duration)
 
 			print response
-	
-			print '\n\n'
-			print str(datetime.datetime.now())
-			print '\n\n'
-
 	return response
 
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', threaded=True, debug=False, port=6500)
-	#app.run('0.0.0.0', debug=False, threaded=True,  port=6500, ssl_context='adhoc')
-
+	#app.run(host='0.0.0.0', threaded=True, debug=False, port=6600)
+	app.run('0.0.0.0', debug=True, port=6600, ssl_context='adhoc')
 
 
 
